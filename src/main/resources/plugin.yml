@@ -1,0 +1,24 @@
+name: Temporall
+version: '${project.version}'
+main: fr.yohem.temporall.Temporal
+commands:
+  setTemp:
+    aliases: "st"
+    description: mettre a jour la date actuelle
+    usage: "setTemp dd mm yyyy"
+    permission: useTemp
+    permission-message: "vous n'avez pas la permission d'utiliser cette commmand"
+  setStartTemp:
+    aliases: "sst"
+    description: mettre a jour la date du debut du serveur
+    usage: "setStartTemp dd mm yyyy"
+    permission: useTemp
+    permission-message: "vous n'avez pas la permission d'utiliser cette commmand"
+  date:
+    aliases: "dt"
+    description: donne la date actuelle
+    usage: "donne la date actuelle"
+permissions:
+  useTemp:
+    default: op
+    description: "utiliser les commandes de gestion des dates du serveur"
