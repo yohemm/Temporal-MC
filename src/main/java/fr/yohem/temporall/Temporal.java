@@ -47,10 +47,13 @@ public final class Temporal extends JavaPlugin {
         int y = fristYear;
         int m = (fristDate)%100;
         long d = (fristDate/100);
+        long daySub = 0;
         while (dayToAdd>0){
             int maxOfMonth = maxDayOfAnMonth(m,y);
-            if (maxOfMonth < dayToAdd+(d-1)){
-                d = 1;
+            if (maxOfMonth < dayToAdd+(d)){
+                daySub += maxOfMonth-(d);
+                dayToAdd -= maxOfMonth-(d);
+                d = 0;
                 m ++;
                 if (m >12){
                     m=1;
@@ -59,9 +62,10 @@ public final class Temporal extends JavaPlugin {
             }
             else {
                 d+=dayToAdd;
+                dayToAdd = 0;
             }
-            dayToAdd -=maxOfMonth-(d-1);
         }
+        System.out.println("Jour écouler: "+nbDayPass+" | Jour : "+d + "/"+month.get(m-1) + "/" + y+" daysSub :"+daySub);
         return d + " "+month.get(m-1) + " " + y;
     }
 
@@ -84,16 +88,15 @@ public final class Temporal extends JavaPlugin {
     public void onLoad(){
         final File file = new File(this.getDataFolder()+"/date.yml");
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-
-        try {
-            int date = (int) yamlConfiguration.get("date");
+        int date;
+        date = (int) yamlConfiguration.get("date");
+        if(date != 0){
             setFristDate(date);
             resetNbDay();
-
-        }catch (NullPointerException e){
-            throw new RuntimeException();
         }
     }
+
+
     @Override
     public void onEnable() {
         World world = getServer().getWorld("world");

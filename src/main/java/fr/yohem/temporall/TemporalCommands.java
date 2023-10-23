@@ -16,9 +16,6 @@ public class TemporalCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
-        System.out.println(s);
-        System.out.println(cmd.getName());
-
         switch (cmd.getName()){
             case "setTemp":{
                 if(args.length == 3){
