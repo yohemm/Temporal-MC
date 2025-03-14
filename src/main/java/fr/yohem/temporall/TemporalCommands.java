@@ -14,57 +14,57 @@ public class TemporalCommands implements CommandExecutor {
         this.temporal = temporal;
     }
 
+    private void sendDateInvalid(CommandSender sender) {
+        sender.sendMessage("Le Format de date est invalid");
+        sender.sendMessage(
+                "Pensé au jour aux année bissextile, force à toi pour les comprende...");
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
-        switch (cmd.getName()){
-            case "setTemp":{
-                if(args.length == 3){
-                    try {
-                        int day = Integer.parseInt(args[0]);
-                        int month = Integer.parseInt(args[1]);
-                        int year = Integer.parseInt(args[2]);
-                        if (temporal.setFristDate(day, month, year)) {
-                            temporal.resetNbDay();
-                            sender.sendMessage("changement de temporalité effectuer avec success");
-                            sender.sendMessage(temporal.getTemp());
-                            return true;
-                        }
-                        else
-                            sender.sendMessage("Le Format de date est invalid");
-                    }catch (NumberFormatException e){
-                        sender.sendMessage("Format de nombre invalid");
-                    }
-                    return true;
-                }
-            }
-            break;
-            case "setStartTemp":{
-                if(args.length == 3){
-                    try {
-                        int day = Integer.parseInt(args[0]);
-                        int month = Integer.parseInt(args[1]);
-                        int year = Integer.parseInt(args[2]);
-                        if (temporal.setFristDate(day, month, year)) {
-                            sender.sendMessage("changement de debut de temporalité effectuer avec success");
-                            sender.sendMessage(temporal.getTemp());
-                            return true;
-                        }
-                        else
-                            sender.sendMessage("Le Format de date est invalid");
-                    }catch (NumberFormatException e){
-                        sender.sendMessage("Format de nombre invalid");
-                    }
-                    return true;
+        if (args.length == 3) {
+            try {
+                int day = Integer.parseInt(args[0]);
+                int month = Integer.parseInt(args[1]);
+                int year = Integer.parseInt(args[2]);
+                if (cmd.getName().equals("setTemp")) {
 
+                    if ((year > temporal.getFirstDate().getYear()
+                            || (year == temporal.getFirstDate().getYear()
+                                    && (month > temporal.getFirstDate().getMonth()
+                                            || (month == temporal.getFirstDate().getMonth()
+                                                    && day >= temporal.getFirstDate().getDay()))))
+                            && temporal.setActualyDate(day, month, year)) {
+                        sender.sendMessage("changement de temporalité effectuer avec success");
+                        return true;
+                    } else {
+                        sendDateInvalid(sender);
+                        sender.sendMessage("La date acuelle ne doit pas être inférieur à la date de début!");
+                    }
                 }
+                if (cmd.getName().equals("setStartTemp")) {
+                    if ((year < temporal.getActualDate().getYear()
+                            || (year == temporal.getActualDate().getYear()
+                                    && (month < temporal.getActualDate().getMonth()
+                                            || month == temporal.getActualDate().getMonth()
+                                                    && day <= temporal.getActualDate().getDay())))
+                            && temporal.setFirstDate(day, month, year)) {
+                        sender.sendMessage("Changement de début de temporalité effectuer avec success");
+                        return true;
+                    } else {
+                        sendDateInvalid(sender);
+                        sender.sendMessage("La date de début ne doit pas être supérieur à la date acuelle!");
+                    }
+                }
+            } catch (NumberFormatException e) {
+                sender.sendMessage("Format de nombre invalid");
             }
-            break;
-            case "date":{
-                sender.sendMessage(temporal.getTemp());
-                return true;
-            }
+            return true;
+
+        } else if (cmd.getName().equals("date")) {
+            sender.sendMessage(temporal.getActualDate().toString());
+            return true;
         }
-        sender.sendMessage(temporal.getTemp());
         return false;
     }
 }
